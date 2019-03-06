@@ -6,6 +6,7 @@ class App extends Component {
   state = {
     linearSearchCount: 0,
     binarySearchCount: 0,
+    searchNumber: 0,
     numbersArray: [89, 30, 25, 32, 72, 70, 51, 42, 25, 24, 53,
       55, 78, 50, 13, 40, 48, 32, 26, 2, 14, 33, 45, 72, 56,
       44, 21, 88, 27, 68, 15, 62, 93, 98, 73, 28, 16, 46, 87,
@@ -16,23 +17,45 @@ class App extends Component {
     ]
   }
 
-  handleLinearSearch(e) {
-    e.preventDefault();
-    console.log(e)
-    let count = this.linearSearch(e.target.value);
-    this.setState({ linearSearchCount: count });
+  handleInput(e) {
+    let number = Number(e.target.value);
+    return this.setState({ searchNumber: number });
   }
 
-  linearSearch(value) {
+  handleLinearSearch(num) {
     const array = this.state.numbersArray;
+    let count = 1
     for (let i = 0; i < array.length; i++) {
-      if (array[i] === value) { return i + 1; }
+      if (array[i] === num) {
+        this.setState({ linearSearchCount: count })
+      } else {
+        count++
+      }
     } return -1;
-  };
+  }
 
-  handelBinarySearch(e) {
-    e.preventDefault();
-    let count = this.binarySearch(e.target.value);
+  handleBinarySearch(value, start, end, count = 1) {
+    const array = this.state.numbersArray;
+    start = start === undefined ? 0 : start;
+    end = end === undefined ? array.length : end;
+    console.log(count)
+    if (start > end) {
+      return -1;
+    }
+    const index = Math.floor((start + end) / 2);
+    const item = array[index];
+    console.log(start, end);
+    if (item === value) {
+      this.setState({ binarySearchCount: count });
+    }
+    else if (item < value) {
+      count++
+      return this.binarySearch(value, index + 1, end, count);
+    }
+    else if (item > value) {
+      count++
+      return this.binarySearch(value, start, index - 1, count);
+    }
     this.setState({ binarySearchCount: count });
   }
 
@@ -61,12 +84,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <form>
-          <input ref={input => (this.input = input)} placeholder="what number me findy?"></input>
-          <button className="linear-search" type="submit" onClick={e => this.handleLinearSearch(e)}>Linear Search</button>
-          <button className="binary-search" type="submit" onClick={e => this.handelBinarySearch(e)}>Binary Search</button>
-        </form>
+        <input onChange={e => this.handleInput(e)} placeholder="what number me findy?"></input>
+        <button className="linear-search" type="submit" onClick={e => this.handleLinearSearch(this.state.searchNumber)}>Linear Search</button>
         <p>Linear Search Count = {this.state.linearSearchCount}</p>
+        <button className="binary-search" type="submit" onClick={e => this.handleBinarySearch(this.state.searchNumber)}>Binary Search</button>
         <p>Binary Search Count = {this.state.binarySearchCount}</p>
       </div>
     );
