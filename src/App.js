@@ -24,67 +24,72 @@ class App extends Component {
 
   handleLinearSearch(num) {
     const array = this.state.numbersArray;
-    let count = 1
+    console.log(array.length);
     for (let i = 0; i < array.length; i++) {
       if (array[i] === num) {
-        this.setState({ linearSearchCount: count })
-      } else {
-        count++
-      }
-    } return -1;
+        this.setState({ linearSearchCount: 'I found it in ' + (i + 1) + ' tries' });
+        return i
+    }
+    this.setState({linearSearchCount: `couldn't find it brosef`})
   }
+}
 
   handleBinarySearch(value, start, end, count = 1) {
     const array = this.state.numbersArray;
     start = start === undefined ? 0 : start;
     end = end === undefined ? array.length : end;
-    console.log(count)
     if (start > end) {
       return -1;
     }
     const index = Math.floor((start + end) / 2);
     const item = array[index];
     console.log(start, end);
+    this.setState({binarySearchCount: count});
     if (item === value) {
-      this.setState({ binarySearchCount: count });
+      return this.setState({ binarySearchCount: count });
     }
     else if (item < value) {
       count++
-      return this.binarySearch(value, index + 1, end, count);
+      return this.handleBinarySearch(value, index + 1, end, count);
     }
     else if (item > value) {
-      count++
-      return this.binarySearch(value, start, index - 1, count);
+      count += 1
+      return this.handleBinarySearch(value, start, index - 1, count);
     }
     this.setState({ binarySearchCount: count });
   }
 
-  binarySearch(value, start, end, count = 1) {
-    const array = this.state.numbersArray;
-    start = start === undefined ? 0 : start;
-    end = end === undefined ? array.length : end;
-    if (start > end) {
-      return -1;
-    }
-    const index = Math.floor((start + end) / 2);
-    const item = array[index];
-    console.log(start, end);
-    if (item == value) {
-      return count;
-    }
-    else if (item < value) {
-      return this.binarySearch(value, index + 1, end, count++);
-    }
-    else if (item > value) {
-      return this.binarySearch(value, start, index - 1, count++);
-    }
-  };
+  // binarySearch(value, start, end, count = 0) {
+  //   const array = this.state.numbersArray;
+  //   start = start === undefined ? 0 : start;
+  //   end = end === undefined ? array.length : end;
+  //   if (start > end) {
+  //     return -1;
+  //   }
+  //   const index = Math.floor((start + end) / 2);
+  //   const item = array[index];
+  //   console.log(start, end);
+  //   if (item == value) {
+  //     this.setState({binarySearchCount: count})
+  //     return count;
+  //   }
+  //   else if (item < value) {
+  //     return this.binarySearch(value, index + 1, end, count++);
+  //   }
+  //   else if (item > value) {
+  //     return this.binarySearch(value, start, index - 1, count++);
+  //   }
+  // };
 
 
   render() {
     return (
       <div className="App">
-        <input onChange={e => this.handleInput(e)} placeholder="what number me findy?"></input>
+        <input 
+        type='text'
+        onChange={e => this.handleInput(e)} 
+        placeholder="what number me findy?"
+        ></input>
         <button className="linear-search" type="submit" onClick={e => this.handleLinearSearch(this.state.searchNumber)}>Linear Search</button>
         <p>Linear Search Count = {this.state.linearSearchCount}</p>
         <button className="binary-search" type="submit" onClick={e => this.handleBinarySearch(this.state.searchNumber)}>Binary Search</button>
